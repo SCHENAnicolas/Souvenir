@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gsg-it-LkN">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Tab Bar Controller-->
+        <scene sceneID="wQc-fX-jWg">
+            <objects>
+                <tabBarController id="gsg-it-LkN" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="dpS-Rd-WMs">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="selectedImageTintColor" red="0.3449796108075015" green="0.35911506940785065" blue="0.39115767045454541" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="kz2-nX-6TK" kind="relationship" relationship="viewControllers" id="aO1-2P-TDK"/>
+                        <segue destination="npL-GO-zZu" kind="relationship" relationship="viewControllers" id="AiW-iz-Yr1"/>
+                        <segue destination="Pf4-nS-Roy" kind="relationship" relationship="viewControllers" id="Nh8-8X-eIr"/>
+                        <segue destination="3kl-sA-iEF" kind="relationship" relationship="viewControllers" id="mo8-YX-Fba"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Eet-VG-Nvh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="443" y="64"/>
+        </scene>
+        <!--Translation-->
+        <scene sceneID="6IT-1Z-KA7">
+            <objects>
+                <navigationController id="Pf4-nS-Roy" userLabel="Translation" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Traduction" image="bubble.right" catalog="system" id="eTM-8a-5g4"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2Ys-Xf-NPt">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="standardAppearance">
+                            <color key="backgroundColor" red="0.70778299619999996" green="0.73360369739999998" blue="0.79012784089999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                        <navigationBarAppearance key="scrollEdgeAppearance">
+                            <color key="backgroundColor" red="0.70980393890000004" green="0.73333334920000004" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="tww-gC-lJo" kind="relationship" relationship="rootViewController" id="ony-nd-208"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XoN-Zk-SWf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1790" y="357"/>
+        </scene>
+        <!--Traduction-->
+        <scene sceneID="9dR-lE-Cck">
+            <objects>
+                <viewController id="tww-gC-lJo" customClass="TranslationViewController" customModule="P9_Souvenir" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ngi-y9-DKw">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bubble.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="nas-5y-SUh">
+                                <rect key="frame" x="87" y="384" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.58499583403291677" green="0.60633712465374257" blue="0.65305538245757577" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Translation" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xe3-qa-zUg">
+                                <rect key="frame" x="128" y="520" width="159" height="41"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="34"/>
+                                <color key="textColor" red="0.58499583403291677" green="0.60633712465374257" blue="0.65305538245757577" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="iep-lj-0H3"/>
+                        <color key="backgroundColor" red="0.89411771299999998" green="0.92941176889999999" blue="0.99215686319999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Traduction" id="EYm-Ih-oVC"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OfI-B9-toN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2699" y="357"/>
+        </scene>
+        <!--Conversion-->
+        <scene sceneID="bDo-yY-L7H">
+            <objects>
+                <navigationController id="3kl-sA-iEF" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Conversion" image="eurosign.circle" catalog="system" id="oUo-rN-HSu"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="7Lt-Sm-YtY">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="standardAppearance">
+                            <color key="backgroundColor" red="0.70980393890000004" green="0.73333334920000004" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                        <navigationBarAppearance key="scrollEdgeAppearance">
+                            <color key="backgroundColor" red="0.70980393890000004" green="0.73333334920000004" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="VfO-gC-n2j" kind="relationship" relationship="rootViewController" id="DHG-o6-b8g"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gnn-oI-8lz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1790" y="1060"/>
+        </scene>
+        <!--Conversion-->
+        <scene sceneID="GnP-yG-F1B">
+            <objects>
+                <viewController id="VfO-gC-n2j" customClass="ConversionViewController" customModule="P9_Souvenir" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="NGk-WX-dDM">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="pJb-mT-XGw"/>
+                        <color key="backgroundColor" red="0.89411771299999998" green="0.92941176889999999" blue="0.99215686319999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Conversion" id="HwP-e3-YJn"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nG0-z6-ys2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2699" y="1059"/>
+        </scene>
+        <!--Home-->
+        <scene sceneID="qzp-zD-MBY">
+            <objects>
+                <navigationController id="kz2-nX-6TK" userLabel="Home" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Acceuil" image="homekit" catalog="system" id="t5s-ay-JKT"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="id1-gH-p7f">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="standardAppearance">
+                            <color key="backgroundColor" red="0.70980393890000004" green="0.73333334920000004" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                        <navigationBarAppearance key="scrollEdgeAppearance">
+                            <color key="backgroundColor" red="0.70980393890000004" green="0.73333334920000004" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="t2R-Zm-Zte" kind="relationship" relationship="rootViewController" id="U6v-zS-AhR"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FT4-lh-FhQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1790" y="-1002"/>
+        </scene>
+        <!--Accueil-->
+        <scene sceneID="DRi-Tp-yaD">
+            <objects>
+                <viewController id="t2R-Zm-Zte" customClass="HomeViewController" customModule="P9_Souvenir" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="EPY-HB-GdB">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EJ8-wA-6BP">
+                                <rect key="frame" x="8" y="96" width="398" height="369"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="34"/>
+                                <color key="textColor" red="0.58499583399999999" green="0.60633712470000001" blue="0.65305538249999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Sv3-Zf-hAs"/>
+                        <color key="backgroundColor" red="0.89411771299999998" green="0.92941176889999999" blue="0.99215686319999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="EJ8-wA-6BP" firstAttribute="top" secondItem="Sv3-Zf-hAs" secondAttribute="top" constant="8" id="hl9-ks-WQt"/>
+                            <constraint firstItem="Sv3-Zf-hAs" firstAttribute="bottom" secondItem="EJ8-wA-6BP" secondAttribute="bottom" constant="348" id="izO-eb-viR"/>
+                            <constraint firstItem="EJ8-wA-6BP" firstAttribute="leading" secondItem="Sv3-Zf-hAs" secondAttribute="leading" constant="8" id="zc9-N9-lfW"/>
+                            <constraint firstItem="Sv3-Zf-hAs" firstAttribute="trailing" secondItem="EJ8-wA-6BP" secondAttribute="trailing" constant="8" id="zqt-Uc-Ekm"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Accueil" id="kHy-gT-Fx4"/>
+                    <connections>
+                        <outlet property="homeText" destination="EJ8-wA-6BP" id="Mda-lP-qbR"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZQ0-X2-71l" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2698.5507246376815" y="-1002.4553571428571"/>
+        </scene>
+        <!--Weather-->
+        <scene sceneID="L77-Yr-oxt">
+            <objects>
+                <navigationController id="npL-GO-zZu" userLabel="Weather" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Météo" image="cloud" catalog="system" id="Rci-Ux-Jdd"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="q9q-jP-8KF">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="standardAppearance">
+                            <color key="backgroundColor" red="0.70778299620747487" green="0.73360369738137865" blue="0.79012784090909094" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                        <navigationBarAppearance key="scrollEdgeAppearance">
+                            <color key="backgroundColor" red="0.70980393890000004" green="0.73333334920000004" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                        </navigationBarAppearance>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="cGJ-rY-rPb" kind="relationship" relationship="rootViewController" id="6rg-cK-bMv"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6Qf-XB-1e8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1790" y="-335"/>
+        </scene>
+        <!--Météo-->
+        <scene sceneID="v2C-Zr-Qm0">
+            <objects>
+                <viewController id="cGJ-rY-rPb" customClass="WeatherViewController" customModule="P9_Souvenir" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="KxN-CG-M4R">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="cloud" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Xk8-l0-WEp">
+                                <rect key="frame" x="87" y="383.5" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.58499583399999999" green="0.60633712470000001" blue="0.65305538249999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Weather" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yR1-2o-Ij0">
+                                <rect key="frame" x="145" y="522" width="124" height="41"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="34"/>
+                                <color key="textColor" red="0.58499583399999999" green="0.60633712470000001" blue="0.65305538249999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="sI4-vv-arR"/>
+                        <color key="backgroundColor" red="0.89411771299999998" green="0.92941176889999999" blue="0.99215686319999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Météo" id="7G8-Ox-tEw"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Crb-Wo-THu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2698.5507246376815" y="-335.49107142857139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="bubble.right" catalog="system" width="128" height="110"/>
+        <image name="cloud" catalog="system" width="128" height="88"/>
+        <image name="eurosign.circle" catalog="system" width="128" height="121"/>
+        <image name="homekit" catalog="system" width="128" height="106"/>
+    </resources>
+</document>
