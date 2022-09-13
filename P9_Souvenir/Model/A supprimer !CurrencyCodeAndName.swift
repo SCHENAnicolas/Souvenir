@@ -7,7 +7,8 @@
 
 import Foundation
 
-let code = ["AED",
+// MARK: Currency Code
+let currencyCode = ["AED",
             "AFN",
             "ALL",
             "AMD",
@@ -176,7 +177,8 @@ let code = ["AED",
             "ZMW",
             "ZWL"]
 
-let name = ["United Arab Emirates Dirham",
+// MARK: Currency Name
+let currencyName = ["United Arab Emirates Dirham",
             "Afghan Afghani",
             "Albanian Lek",
             "Armenian Dram",
