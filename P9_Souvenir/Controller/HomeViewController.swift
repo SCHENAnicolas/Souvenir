@@ -17,10 +17,9 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var homeText: UILabel!
     
     private func randomHomeText() {
-        if let goGo = encouragement.randomElement() {
-            homeText.text = "\(goGo)"
-        } else {
+        guard let cheers = cheers.randomElement() else {
             homeText.text = ""
-        }
+            return }
+        homeText.text = cheers
     }
 }

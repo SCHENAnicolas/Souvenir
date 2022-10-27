@@ -7,9 +7,7 @@
 
 import Foundation
 
-//cheers
-
-let encouragement = ["Bienvenue, une nouvelle journée commence",
+let cheers = ["Bienvenue, une nouvelle journée commence",
                      "Bonjour, bon courage pour la journée",
                      "C'est l'heure du café, ou allons nous ?",
                      "Fait-il beau ce matin ? Regardons ça ensemble",
