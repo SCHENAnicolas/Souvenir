@@ -9,15 +9,16 @@ import UIKit
 
 class ConversionViewController: UIViewController {
     
-//    MARK: - Properties
+    //    MARK: - Properties
     private var currenciesArray: [Currency]?
-    private var conversionIndex = 0
-    private var conversion = Conversion()
+    private let service = ConversionService()
+    private var selectedButton: UIButton?
+    private var selectedLabel: UILabel?
     
-//    MARK: - IBOutlet
+    //    MARK: - IBOutlet
     @IBOutlet weak var fromCurrencyName: UILabel!
     @IBOutlet weak var toCurrencyName: UILabel!
-    @IBOutlet weak var fromCurrencyCode: UILabel!
+    @IBOutlet weak var fromCurrencyCode: UIButton!
     @IBOutlet weak var toCurrencyCode: UIButton!
     @IBOutlet weak var fromCurrencyAmount: UITextField!
     @IBOutlet weak var toCurrencyAmount: UILabel!
@@ -29,6 +30,7 @@ class ConversionViewController: UIViewController {
     @IBOutlet weak var relaunch: UIButton!
     @IBOutlet weak var convert: UIButton!
     
+    // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         addRoundCornerToLabel()
@@ -36,8 +38,16 @@ class ConversionViewController: UIViewController {
         currencyAPICall()
     }
     
-//    MARK: - IBAction
-    @IBAction func toCurrencyButton(_ sender: Any) {
+    //    MARK: - IBAction
+    @IBAction func fromCurrencyButton(_ sender: UIButton) {
+        selectedButton = sender
+        selectedLabel = fromCurrencyName
+        getCurrencyInstruction()
+    }
+    
+    @IBAction func toCurrencyButton(_ sender: UIButton) {
+        selectedButton = sender
+        selectedLabel = toCurrencyName
         getCurrencyInstruction()
     }
     
@@ -46,16 +56,29 @@ class ConversionViewController: UIViewController {
     }
     
     @IBAction func convertButton(_ sender: Any) {
-        let amountToConvert: Double? = Double(fromCurrencyAmount.text!)
-        let conversionRate = currenciesArray![conversionIndex].rate
-        guard let amountToConvert = amountToConvert else {
-            return
-        }
-        let result: String? = String(conversion.calculation(amountToConvert, conversionRate))
-        toCurrencyAmount.text = result
+        conversionAPICall()
     }
     
-//    MARK: - Function
+    //    MARK: - Function
+    private func conversionAPICall() {
+        self.toggleConvertMode(shown: true)
+        guard let toCurrencyCode = toCurrencyCode.currentTitle,
+              let fromCurrencyCode = fromCurrencyCode.currentTitle,
+              let fromCurrencyAmount = fromCurrencyAmount.text,
+              let amountToConvert = Double(fromCurrencyAmount) else {
+                  self.toggleConvertMode(shown: false)
+                  return
+              }
+        service.conversionAPICall(toCurrencyCode, fromCurrencyCode, amountToConvert) { success, convertedResult in
+            DispatchQueue.main.async{
+                self.toggleConvertMode(shown: false)
+                self.dateLabel.text = convertedResult.date
+                self.conversionRate.text = convertedResult.rate
+                self.toCurrencyAmount.text = convertedResult.result
+            }
+        }
+    }
+    
     private func getCurrencyInstruction() {
         performSegue(withIdentifier: "currencySelection", sender: self)
     }
@@ -70,6 +93,8 @@ class ConversionViewController: UIViewController {
         dateLabel.isHidden = shown
         activityIndicator.isHidden = !shown
         toCurrencyCode.isEnabled = !shown
+        fromCurrencyCode.isEnabled = !shown
+        fromCurrencyAmount.isEnabled = !shown
         convert.isEnabled = !shown
     }
     
@@ -78,15 +103,29 @@ class ConversionViewController: UIViewController {
         relaunch.isHidden = false
     }
     
+    private func toggleConvertMode(shown: Bool) {
+        if shown == true {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
+        convert.isHidden = shown
+        activityIndicator.isHidden = !shown
+    }
+    
     private func currencyAPICall() {
         toggleActivityIndicator(shown: true)
-        ConversionService.shared.currencyAPICall { currencies in
-            self.toggleActivityIndicator(shown: false)
-            self.relaunch.isHidden = true
-            self.currenciesArray = currencies
+        self.relaunch.isHidden = true
+        service.currencyAPICall { currencies in
+            DispatchQueue.main.async{
+                self.toggleActivityIndicator(shown: false)
+                self.currenciesArray = currencies
+            }
         } errorHandler: {
-            self.presentAlert()
-            self.toggleRelaunchMode()
+            DispatchQueue.main.async{
+                self.presentAlert()
+                self.toggleRelaunchMode()
+            }
         }
     }
     
@@ -112,10 +151,8 @@ extension ConversionViewController: ConversionPopUpDelegate {
             return
         }
         let currency = currencies[index]
-        toCurrencyCode.setTitle("\(currency.code)", for: .normal)
-        toCurrencyName.text = currency.name
-        conversionRate.text = "Conversion rate :\n\(currency.rate)"
-        conversionIndex = index
+        selectedButton?.setTitle("\(currency.code)", for: .normal)
+        selectedLabel?.text = currency.name
     }
 }
 
@@ -130,7 +167,6 @@ extension ConversionViewController {
 
 // MARK: - Label
 extension ConversionViewController {
-    
     private func labelRoundCornered(_ label: UILabel) {
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 8.0
@@ -138,7 +174,6 @@ extension ConversionViewController {
     
     /// Method to add round corners to specified label
     private func addRoundCornerToLabel() {
-        labelRoundCornered(fromCurrencyCode)
         labelRoundCornered(toCurrencyAmount)
     }
 }
