@@ -7,18 +7,30 @@
 
 import Foundation
 
-struct CurrencyCodeAndName: Codable {
+// MARK: - Symbols API Struct
+struct CurrencyCodeAndName: Decodable {
     let symbols: [String: String]
 }
 
-struct CurrencyDateAndRate: Codable {
-    let rates: [String: Double]
-    let date: String
-}
-
 struct Currency {
-    let date: String
-    let rate: Double
     let name: String
     let code: String
+}
+
+// MARK: - Conversion API Struct
+struct CurrencyDateAndRate: Decodable {
+    let info: Info
+    let date: String
+    let result: Double
+}
+
+struct Info: Codable {
+    let rate: Double
+}
+
+// MARK: - Conversion used Struct
+struct ConversionResult {
+    let date: String
+    let result: String
+    let rate: String
 }

@@ -8,40 +8,42 @@
 import Foundation
 
 class ConversionService {
-    // MARK: - Pattern Singleton
-    static var shared = ConversionService()
-    private init() {}
+    
+    private let session: URLSession
+    private var task: URLSessionDataTask?
+    
+    init(session: URLSession = URLSession(configuration: .default)) {
+        self.session = session
+    }
     
     // MARK: - Properties
     private let apiKey = "wscyUz3t3BPNogLuE5AZE403Bn2lQcHm"
-    private let conversionRateURL = URL(string: "https://api.apilayer.com/fixer/latest?base=EUR")!
     private let currencySymbolsURL = URL(string: "https://api.apilayer.com/fixer/symbols")!
     
-    // MARK: - Function
-    private func getConversionRate(callback: @escaping (Bool, CurrencyDateAndRate?) -> Void) {
-        var request = URLRequest(url: conversionRateURL)
+    // MARK: - API Call Functions
+    private func getConversion(to: String, from: String, amount: Double, callback: @escaping (Bool, CurrencyDateAndRate?) -> Void) {
+        let conversionURL = URL(string: "https://api.apilayer.com/fixer/convert?to=\(to)&from=\(from)&amount=\(amount)")!
+        var request = URLRequest(url: conversionURL)
         request.httpMethod = "Get"
         request.addValue(apiKey, forHTTPHeaderField: "apikey")
+        task?.cancel()
         
-        let session = URLSession(configuration: .default)
-        let task = session.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                guard let data = data, error == nil else {
-                    callback(false, nil)
-                    return
-                }
-                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                    callback(false, nil)
-                    return
-                }
-                guard let rateJSON = try? JSONDecoder().decode(CurrencyDateAndRate.self, from: data) else {
-                    callback(false, nil)
-                    return
-                }
-                callback(true, rateJSON)
+        task = session.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                callback(false, nil)
+                return
             }
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                callback(false, nil)
+                return
+            }
+            guard let conversionJSON = try? JSONDecoder().decode(CurrencyDateAndRate.self, from: data) else {
+                callback(false, nil)
+                return
+            }
+            callback(true, conversionJSON)
         }
-        task.resume()
+        task?.resume()
     }
     
     private func getSymbols(callback: @escaping (Bool, CurrencyCodeAndName?) -> Void) {
@@ -49,31 +51,26 @@ class ConversionService {
         request.httpMethod = "Get"
         request.addValue(apiKey, forHTTPHeaderField: "apikey")
         
-        let session = URLSession(configuration: .default)
         let task = session.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                guard let data = data, error == nil,
-                      let response = response as? HTTPURLResponse,
-                      response.statusCode == 200 else {
-                          callback(false, nil)
-                          return
-                      }
-                guard let symbolsJSON = try? JSONDecoder().decode(CurrencyCodeAndName.self, from: data) else {
-                    callback(false, nil)
-                    return
-                }
-                callback(true, symbolsJSON)
+            guard let data = data, error == nil,
+                  let response = response as? HTTPURLResponse,
+                  response.statusCode == 200 else {
+                      callback(false, nil)
+                      return
+                  }
+            guard let symbolsJSON = try? JSONDecoder().decode(CurrencyCodeAndName.self, from: data) else {
+                callback(false, nil)
+                return
             }
+            callback(true, symbolsJSON)
         }
         task.resume()
     }
     
-    private func createCurrencies(_ conversionCurrency: CurrencyCodeAndName, _ conversionRates: CurrencyDateAndRate) -> [Currency] {
-        let currencies = conversionCurrency.symbols.compactMap({ (key: String, value: String) -> Currency? in
-            let rates = conversionRates.rates
-            let date = conversionRates.date
-            guard let rate = rates[key] else { return nil }
-            return Currency(date: date, rate: rate, name: value, code: key)
+    // MARK: - Functions
+    private func createSymbols(_ currenciesSymbol: CurrencyCodeAndName) -> [Currency] {
+        let currencies = currenciesSymbol.symbols.compactMap({ (key: String, value: String) -> Currency? in
+            return Currency(name: value, code: key)
         })
         let sortedCurrencies = currencies.sorted { $0.name < $1.name }
         return sortedCurrencies
@@ -85,14 +82,24 @@ class ConversionService {
                 errorHandler()
                 return
             }
-            self.getConversionRate { success, dateAndRates in
-                guard let dateAndRates = dateAndRates, success == true else {
-                    errorHandler()
-                    return
-                }
-                let currencies = self.createCurrencies(symbols, dateAndRates)
-                successCallback(currencies)
-            }
+            let currencies = self.createSymbols(symbols)
+            successCallback(currencies)
+        }
+    }
+    
+    func conversionAPICall(_ to: String,_ from: String,_ amount: Double, callback: @escaping (Bool, ConversionResult) -> Void) {
+        getConversion(to: to, from: from, amount: amount) { success, result in
+            guard let date = result?.date,
+                  let rate = result?.info.rate,
+                  let result = result?.result else {
+                      return
+                  }
+            guard let rate = String?(rate.description),
+                  let result = String?(result.description) else {
+                      return
+                  }
+            let conformConversion = ConversionResult(date: "Date: \n \(date)", result: " \(result)", rate: "Rate: \n \(rate)")
+            callback(success, conformConversion)
         }
     }
 }
