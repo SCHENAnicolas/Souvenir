@@ -7,38 +7,44 @@
 
 import Foundation
 
-// MARK: - Welcome
+
+// MARK: - Weather Object
 struct WeatherObject: Codable {
-    let coord: GeoCoordinate
     let weather: [Weather]
-    let main: Main
+    let main: Temperature
     let name: String
 }
 
-// MARK: - Coord
-struct GeoCoordinate: Codable {
-    let lon, lat: Double
-}
-
-// MARK: - Main
-struct Main: Codable {
-    let temp, feelsLike, tempMin, tempMax: Double
-    let pressure, humidity: Int
+// MARK: - Temperature decoding
+struct Temperature: Codable {
+    let temp, tempMin, tempMax: Double
 
     enum CodingKeys: String, CodingKey {
         case temp
-        case feelsLike = "feels_like"
         case tempMin = "temp_min"
         case tempMax = "temp_max"
-        case pressure, humidity
     }
 }
 
-// MARK: - Weather
+// MARK: - Weather decoding
 struct Weather: Codable {
-    let weatherDescription: String
+    let weatherDescription, icon: String
 
     enum CodingKeys: String, CodingKey {
         case weatherDescription = "description"
+        case icon
     }
 }
+
+// MARK: - Coordinate decoding
+struct GeoCoordinate: Codable {
+    let name: String
+    let lat, lon: Double
+    let state: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case lat, lon, state
+    }
+}
+typealias Coordinate = [GeoCoordinate]
