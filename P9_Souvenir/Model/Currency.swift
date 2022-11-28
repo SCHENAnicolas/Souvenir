@@ -28,7 +28,7 @@ struct Info: Codable {
     let rate: Double
 }
 
-// MARK: - Conversion used Struct
+// MARK: - Conversion Object
 struct ConversionResult {
     let date: String
     let result: String

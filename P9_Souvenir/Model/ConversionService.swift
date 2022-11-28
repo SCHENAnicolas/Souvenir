@@ -7,6 +7,13 @@
 
 import Foundation
 
+enum NetworkError: String, Error {
+    case noData = "No Data available"
+    case invalidResponse = "Wrong response code"
+    case undecodableData = "Cannot decode Data"
+    case unconformable = "Didn't succeeded to conform Data"
+}
+
 class ConversionService {
     
     private let session: URLSession
@@ -21,7 +28,7 @@ class ConversionService {
     private let currencySymbolsURL = URL(string: "https://api.apilayer.com/fixer/symbols")!
     
     // MARK: - API Call Functions
-    private func getConversion(to: String, from: String, amount: Double, callback: @escaping (Bool, CurrencyDateAndRate?) -> Void) {
+    private func getConversion(to: String, from: String, amount: Double, callback: @escaping (Result<CurrencyDateAndRate, NetworkError>) -> Void) {
         let conversionURL = URL(string: "https://api.apilayer.com/fixer/convert?to=\(to)&from=\(from)&amount=\(amount)")!
         var request = URLRequest(url: conversionURL)
         request.httpMethod = "Get"
@@ -30,45 +37,49 @@ class ConversionService {
         
         task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
-                callback(false, nil)
+                callback(.failure(.noData))
                 return
             }
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                callback(false, nil)
+                callback(.failure(.invalidResponse))
                 return
             }
             guard let conversionJSON = try? JSONDecoder().decode(CurrencyDateAndRate.self, from: data) else {
-                callback(false, nil)
+                callback(.failure(.undecodableData))
                 return
             }
-            callback(true, conversionJSON)
+            callback(.success(conversionJSON))
         }
         task?.resume()
     }
     
-    private func getSymbols(callback: @escaping (Bool, CurrencyCodeAndName?) -> Void) {
+    private func getSymbols(callback: @escaping (Result<CurrencyCodeAndName, NetworkError>) -> Void) {
         var request = URLRequest(url: currencySymbolsURL)
         request.httpMethod = "Get"
         request.addValue(apiKey, forHTTPHeaderField: "apikey")
+        task?.cancel()
         
         let task = session.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil,
-                  let response = response as? HTTPURLResponse,
+            guard let data = data, error == nil else {
+                callback(.failure(.noData))
+                return
+            }
+            guard let response = response as? HTTPURLResponse,
                   response.statusCode == 200 else {
-                      callback(false, nil)
+                      callback(.failure(.invalidResponse))
                       return
                   }
             guard let symbolsJSON = try? JSONDecoder().decode(CurrencyCodeAndName.self, from: data) else {
-                callback(false, nil)
+                callback(.failure(.undecodableData))
                 return
             }
-            callback(true, symbolsJSON)
+            callback(.success(symbolsJSON))
         }
         task.resume()
     }
     
     // MARK: - Functions
-    private func createSymbols(_ currenciesSymbol: CurrencyCodeAndName) -> [Currency] {
+    private func createSymbolsArray(_ currenciesSymbol: CurrencyCodeAndName) -> [Currency] {
         let currencies = currenciesSymbol.symbols.compactMap({ (key: String, value: String) -> Currency? in
             return Currency(name: value, code: key)
         })
@@ -76,30 +87,27 @@ class ConversionService {
         return sortedCurrencies
     }
     
-    func currencyAPICall(successCallback: @escaping ([Currency]) -> Void, errorHandler: @escaping () -> Void) {
-        getSymbols { success, symbols in
-            guard let symbols = symbols, success == true else {
-                errorHandler()
-                return
+    func currencyAPICall(callback: @escaping (Result<[Currency], NetworkError>) -> Void) {
+        getSymbols { currencies in
+            switch currencies {
+            case let .success(symbols):
+                let conformCurrencies = self.createSymbolsArray(symbols)
+                callback(.success(conformCurrencies))
+            case .failure(_):
+                callback(.failure(.unconformable))
             }
-            let currencies = self.createSymbols(symbols)
-            successCallback(currencies)
         }
     }
     
-    func conversionAPICall(_ to: String,_ from: String,_ amount: Double, callback: @escaping (Bool, ConversionResult) -> Void) {
-        getConversion(to: to, from: from, amount: amount) { success, result in
-            guard let date = result?.date,
-                  let rate = result?.info.rate,
-                  let result = result?.result else {
-                      return
-                  }
-            guard let rate = String?(rate.description),
-                  let result = String?(result.description) else {
-                      return
-                  }
-            let conformConversion = ConversionResult(date: "Date: \n \(date)", result: " \(result)", rate: "Rate: \n \(rate)")
-            callback(success, conformConversion)
+    func conversionAPICall(_ to: String,_ from: String,_ amount: Double, callback: @escaping (Result<ConversionResult, NetworkError>) -> Void) {
+        getConversion(to: to, from: from, amount: amount) { conversion in
+            switch conversion {
+            case let .success(result):
+                let conformConversion = ConversionResult(date: "Date: \n \(result.date)", result: " \(result.result)", rate: "Rate: \n \(result.info.rate)")
+                callback(.success(conformConversion))
+            case .failure(_):
+                callback(.failure(.unconformable))
+            }
         }
     }
 }
