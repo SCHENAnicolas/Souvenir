@@ -7,6 +7,13 @@
 
 import UIKit
 
+private enum Alert: String {
+    case noFromCurrency = "Must choose the currency to convert"
+    case noToCurrency = "Must choose the currency to convert into"
+    case noAmount = "Amount required"
+    case noResponse = "The server didn't respond"
+}
+
 class ConversionViewController: UIViewController {
     
     //    MARK: - Properties
@@ -62,19 +69,33 @@ class ConversionViewController: UIViewController {
     //    MARK: - Function
     private func conversionAPICall() {
         self.toggleConvertMode(shown: true)
-        guard let toCurrencyCode = toCurrencyCode.currentTitle,
-              let fromCurrencyCode = fromCurrencyCode.currentTitle,
-              let fromCurrencyAmount = fromCurrencyAmount.text,
-              let amountToConvert = Double(fromCurrencyAmount) else {
-                  self.toggleConvertMode(shown: false)
-                  return
-              }
-        service.conversionAPICall(toCurrencyCode, fromCurrencyCode, amountToConvert) { success, convertedResult in
+        guard let toCurrencyCode = toCurrencyCode.currentTitle else {
+            self.presentAlert(Alert.noToCurrency.rawValue)
+            self.toggleConvertMode(shown: false)
+            return
+        }
+        guard let fromCurrencyCode = fromCurrencyCode.currentTitle else {
+            self.presentAlert(Alert.noFromCurrency.rawValue)
+            self.toggleConvertMode(shown: false)
+            return
+        }
+        guard let fromCurrencyAmount = fromCurrencyAmount.text,
+        let amountToConvert = Double(fromCurrencyAmount) else {
+            self.presentAlert(Alert.noAmount.rawValue)
+            self.toggleConvertMode(shown: false)
+            return
+        }
+        service.conversionAPICall(toCurrencyCode, fromCurrencyCode, amountToConvert) { result in
             DispatchQueue.main.async{
-                self.toggleConvertMode(shown: false)
-                self.dateLabel.text = convertedResult.date
-                self.conversionRate.text = convertedResult.rate
-                self.toCurrencyAmount.text = convertedResult.result
+                switch result {
+                case let .success(convertedResult):
+                    self.toggleConvertMode(shown: false)
+                    self.dateLabel.text = convertedResult.date
+                    self.conversionRate.text = convertedResult.rate
+                    self.toCurrencyAmount.text = convertedResult.result
+                case let .failure(error):
+                    self.presentAlert(error.rawValue)
+                }
             }
         }
     }
@@ -116,26 +137,29 @@ class ConversionViewController: UIViewController {
     private func currencyAPICall() {
         toggleActivityIndicator(shown: true)
         self.relaunch.isHidden = true
-        service.currencyAPICall { currencies in
-            DispatchQueue.main.async{
-                self.toggleActivityIndicator(shown: false)
-                self.currenciesArray = currencies
-            }
-        } errorHandler: {
-            DispatchQueue.main.async{
-                self.presentAlert()
-                self.toggleRelaunchMode()
+        service.currencyAPICall { result in
+            DispatchQueue.main.async {
+                switch result {
+                case let .success(symbols):
+                    self.toggleActivityIndicator(shown: false)
+                    self.currenciesArray = symbols
+                case .failure(_):
+                    self.toggleRelaunchMode()
+                    self.presentAlert(Alert.noResponse.rawValue)
+                }
             }
         }
     }
-    
-    private func presentAlert() {
-        let alertVC = UIAlertController(title: "Error", message: "The server didn't respond", preferredStyle: .alert)
+}
+
+// MARK: - Present Alert
+extension UIViewController {
+    func presentAlert(_ message: String) {
+        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         present(alertVC, animated: true, completion: nil)
     }
 }
-
 
 // MARK: - Keyboard
 extension ConversionViewController: UITextFieldDelegate {
