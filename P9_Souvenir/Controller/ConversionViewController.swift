@@ -15,28 +15,28 @@ private enum Alert: String {
 }
 
 class ConversionViewController: UIViewController {
-    
-    //    MARK: - Properties
+
+    // MARK: - Properties
     private var currenciesArray: [Currency]?
     private let service = ConversionService()
     private var selectedButton: UIButton?
     private var selectedLabel: UILabel?
-    
-    //    MARK: - IBOutlet
+
+    // MARK: - IBOutlet
     @IBOutlet weak var fromCurrencyName: UILabel!
     @IBOutlet weak var toCurrencyName: UILabel!
     @IBOutlet weak var fromCurrencyCode: UIButton!
     @IBOutlet weak var toCurrencyCode: UIButton!
     @IBOutlet weak var fromCurrencyAmount: UITextField!
     @IBOutlet weak var toCurrencyAmount: UILabel!
-    
+
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var conversionRate: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
+
     @IBOutlet weak var relaunch: UIButton!
     @IBOutlet weak var convert: UIButton!
-    
+
     // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,29 +44,29 @@ class ConversionViewController: UIViewController {
         activityIndicator.startAnimating()
         currencyAPICall()
     }
-    
-    //    MARK: - IBAction
+
+    // MARK: - IBAction
     @IBAction func fromCurrencyButton(_ sender: UIButton) {
         selectedButton = sender
         selectedLabel = fromCurrencyName
         getCurrencyInstruction()
     }
-    
+
     @IBAction func toCurrencyButton(_ sender: UIButton) {
         selectedButton = sender
         selectedLabel = toCurrencyName
         getCurrencyInstruction()
     }
-    
+
     @IBAction func relaunchButton(_ sender: Any) {
         currencyAPICall()
     }
-    
+
     @IBAction func convertButton(_ sender: Any) {
         conversionAPICall()
     }
-    
-    //    MARK: - Function
+
+    // MARK: - Function
     private func conversionAPICall() {
         self.toggleConvertMode(shown: true)
         guard let toCurrencyCode = toCurrencyCode.currentTitle else {
@@ -86,7 +86,7 @@ class ConversionViewController: UIViewController {
             return
         }
         service.conversionAPICall(toCurrencyCode, fromCurrencyCode, amountToConvert) { result in
-            DispatchQueue.main.async{
+            DispatchQueue.main.async {
                 switch result {
                 case let .success(convertedResult):
                     self.toggleConvertMode(shown: false)
@@ -99,11 +99,11 @@ class ConversionViewController: UIViewController {
             }
         }
     }
-    
+
     private func getCurrencyInstruction() {
         performSegue(withIdentifier: "currencySelection", sender: self)
     }
-    
+
     private func toggleActivityIndicator(shown: Bool) {
         if shown == true {
             activityIndicator.startAnimating()
@@ -118,12 +118,12 @@ class ConversionViewController: UIViewController {
         fromCurrencyAmount.isEnabled = !shown
         convert.isEnabled = !shown
     }
-    
+
     private func toggleRelaunchMode() {
         activityIndicator.isHidden = true
         relaunch.isHidden = false
     }
-    
+
     private func toggleConvertMode(shown: Bool) {
         if shown == true {
             activityIndicator.startAnimating()
@@ -133,7 +133,7 @@ class ConversionViewController: UIViewController {
         convert.isHidden = shown
         activityIndicator.isHidden = !shown
     }
-    
+
     private func currencyAPICall() {
         toggleActivityIndicator(shown: true)
         self.relaunch.isHidden = true
@@ -195,7 +195,7 @@ extension ConversionViewController {
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 8.0
     }
-    
+
     /// Method to add round corners to specified label
     private func addRoundCornerToLabel() {
         labelRoundCornered(toCurrencyAmount)

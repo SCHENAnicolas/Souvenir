@@ -12,10 +12,10 @@ protocol ConversionPopUpDelegate: AnyObject {
 }
 
 class ConversionPopUpViewController: UIViewController {
-    
-    var delegate: ConversionPopUpDelegate?
+
+    weak var delegate: ConversionPopUpDelegate?
     var currenciesArray: [Currency]?
-    
+
     @IBOutlet weak var code: UILabel!
     @IBOutlet weak var fromCurrencyPickerView: UIPickerView!
 
@@ -24,13 +24,13 @@ class ConversionPopUpViewController: UIViewController {
         delegate?.didSelectCurrency(index: index)
         dismiss(animated: true)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         code.text = "\(currenciesArray?[0].code ?? "")"
         addRoundCornerToLabel()
     }
-    
+
     private func returnIndex() -> Int {
         let index = fromCurrencyPickerView.selectedRow(inComponent: 0)
         return index
