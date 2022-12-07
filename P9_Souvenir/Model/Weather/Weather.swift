@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // MARK: - Weather Object
 struct WeatherObject: Codable {
     let weather: [Weather]
@@ -48,3 +47,19 @@ struct GeoCoordinate: Codable {
     }
 }
 typealias Coordinate = [GeoCoordinate]
+
+// MARK: - Information Object
+struct CoordinateInformation {
+    let city: String
+    let state: String
+    let lat: Double
+    let lon: Double
+}
+
+struct WeatherInformation {
+    let temp: String
+    let description: String
+    let tempMin: String
+    let tempMax: String
+    let iconID: String
+}

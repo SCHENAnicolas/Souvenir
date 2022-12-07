@@ -6,3 +6,13 @@
 //
 
 import Foundation
+
+// MARK: - Translation
+struct Translation: Codable {
+    let translations: [TranslationElement]
+}
+
+// MARK: - TranslationElement
+struct TranslationElement: Codable {
+    let text: String
+}
