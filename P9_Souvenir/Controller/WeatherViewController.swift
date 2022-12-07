@@ -6,75 +6,38 @@
 //
 
 import UIKit
+import CoreLocation
 
-enum weatherIcon: String {
-    case clearSky = "01d"
-    case clearNightSky = "01n"
-    case fewClouds = "02d"
-    case fewCloudsNight = "02n"
-    
-    case scatteredClouds = "03d"
-    case scatteredCloudsNight = "03n"
-    case brokenCloud = "04d"
-    case brokenCloudNight = "04n"
-    
-    case showerRain = "09d"
-    case showerRainNight = "09n"
-    
-    case rain = "10d"
-    case rainNight = "10n"
-    
-    case thunderstorm = "11d"
-    case thunderstormNight = "11n"
-    
-    case snow = "13d"
-    case snowNight = "13n"
-    
-    case mist = "50d"
-    case mistNight = "50n"
-    
-    var image: UIImage {
-        switch self {
-        case .clearSky: return UIImage(systemName: "sun.max.fill")!
-        case .clearNightSky: return UIImage(systemName: "moon.star.fill")!
-            
-        case .fewClouds: return UIImage(systemName:"cloud.sun.fill")!
-        case .fewCloudsNight: return UIImage(systemName: "cloud.moon.fill")!
-            
-        case .scatteredClouds: return UIImage(systemName:"cloud.fill")!
-        case .scatteredCloudsNight: return UIImage(systemName:"cloud.fill")!
-        case .brokenCloud: return UIImage(systemName:"cloud.fill")!
-        case .brokenCloudNight: return UIImage(systemName:"cloud.fill")!
-            
-        case .showerRain: return UIImage(systemName: "cloud.drizzle.fill")!
-        case .showerRainNight: return UIImage(systemName: "cloud.drizzle.fill")!
-            
-        case .rain: return UIImage(systemName: "cloud.rain.fill")!
-        case .rainNight: return UIImage(systemName: "cloud.rain.fill")!
-            
-        case .thunderstorm: return UIImage(systemName: "cloud.bolt.rain.fill")!
-        case .thunderstormNight: return UIImage(systemName: "cloud.bolt.rain.fill")!
-            
-        case .snow: return UIImage(systemName: "cloud.snow.fill")!
-        case .snowNight: return UIImage(systemName: "cloud.snow.fill")!
-            
-        case .mist: return UIImage(systemName: "cloud.fog.fill")!
-        case .mistNight: return UIImage(systemName: "cloud.fog.fill")!
-        }
-    }
-    
-    
-    
-}
+class WeatherViewController: UIViewController, CLLocationManagerDelegate {
 
-class WeatherViewController: UIViewController {
-    
+    private let iconDictionnary = ["01d": UIImage(systemName: "sun.max.fill"),
+                                   "01n": UIImage(systemName: "moon.stars.fill"),
+                                   "02d": UIImage(systemName: "cloud.sun.fill"),
+                                   "02n": UIImage(systemName: "cloud.moon.fill"),
+                                   "03d": UIImage(systemName: "cloud.fill"),
+                                   "03n": UIImage(systemName: "cloud.fill"),
+                                   "04d": UIImage(systemName: "cloud.fill"),
+                                   "04n": UIImage(systemName: "cloud.fill"),
+                                   "09d": UIImage(systemName: "cloud.drizzle.fill"),
+                                   "09n": UIImage(systemName: "cloud.drizzle.fill"),
+                                   "10d": UIImage(systemName: "cloud.rain.fill"),
+                                   "10n": UIImage(systemName: "cloud.rain.fill"),
+                                   "11d": UIImage(systemName: "cloud.bolt.rain.fill"),
+                                   "11n": UIImage(systemName: "cloud.bolt.rain.fill"),
+                                   "13d": UIImage(systemName: "cloud.snow.fill"),
+                                   "13n": UIImage(systemName: "cloud.snow.fill"),
+                                   "50d": UIImage(systemName: "cloud.fog.fill"),
+                                   "50n": UIImage(systemName: "cloud.fog.fill")]
+
+    // MARK: - CLlocation
+    private var locationManager: CLLocationManager?
+
     private let service = WeatherService()
     private let newYorkLat = 40.7127281
     private let newYorkLon = -74.0060152
-    
+
     @IBOutlet weak var citySearchTextField: UITextField!
-    
+
     // MARK: - New York IBOutlet
     @IBOutlet weak var newYorkStackView: UIStackView!
     @IBOutlet weak var newYorkImageView: UIImageView!
@@ -82,9 +45,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var newYorkDescription: UILabel!
     @IBOutlet weak var newYorkMin: UILabel!
     @IBOutlet weak var newYorkMax: UILabel!
-    
+
     // MARK: - City IBOutlet
-    
     @IBOutlet weak var cityStackView: UIStackView!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var stateLabel: UILabel!
@@ -93,83 +55,110 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var cityDescription: UILabel!
     @IBOutlet weak var cityMin: UILabel!
     @IBOutlet weak var cityMax: UILabel!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         addRoundCorner()
         getNewYorkWeather()
+
+        if (CLLocationManager.locationServicesEnabled()) {
+            locationManager = CLLocationManager()
+            locationManager?.requestWhenInUseAuthorization()
+            locationManager?.requestAlwaysAuthorization()
+
+            locationManager?.delegate = self
+            locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager?.startUpdatingLocation()
+        }
     }
-    
+
     @IBAction func button(_ sender: Any) {
         getCoordinate()
     }
-    
-    //    MARK: - A modifier
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else {return}
+        let latitude = location.coordinate.latitude
+        let longitude = location.coordinate.longitude
+        getAutoLocationWeather(lat: latitude, lon: longitude)
+    }
+
+    // MARK: - Functions
     private func getCoordinate() {
         guard let city = citySearchTextField.text, citySearchTextField.text?.isEmpty == false else {
             presentAlert("No city in the search")
             return
         }
-        service.getGeoCoordinate(city: city) { result in
+        service.geoCoordinate(city: city) { result in
             DispatchQueue.main.async {
                 switch result {
                 case let .success(coordinate):
-                    guard case coordinate.isEmpty = false else {
-                        self.presentAlert("")
-                        return
-                    }
-                    self.cityLabel.text = coordinate[0].name
-                    self.stateLabel.text = coordinate[0].state
-                    self.getWeather(lat: coordinate[0].lat, lon: coordinate[0].lon)
+                    self.cityLabel.text = coordinate.city
+                    self.stateLabel.text = coordinate.state
+                    self.getWeather(lat: coordinate.lat, lon: coordinate.lon)
                 case .failure(_):
                     break
                 }
             }
         }
     }
-    
+
     private func getWeather(lat: Double, lon: Double) {
-        service.getWeather(lat: lat, lon: lon) { weatherCity in
+        service.geoWeather(lat: lat, lon: lon) { cityWeather in
             DispatchQueue.main.async {
-                switch weatherCity {
+                switch cityWeather {
                 case let .success(weather):
-                    self.cityTemp.text = "\(String(weather.main.temp.description))°"
-                    self.cityDescription.text = "\(weather.weather[0].weatherDescription)"
-                    self.cityMin.text = "\(String(weather.main.tempMin.description))°"
-                    self.cityMax.text = "\(String(weather.main.tempMax.description))°"
-                    self.cityImageView.image = self.updateIcon(weather.weather[0].icon)
+                    self.cityTemp.text = weather.temp
+                    self.cityDescription.text = weather.description
+                    self.cityMin.text = weather.tempMin
+                    self.cityMax.text = weather.tempMax
+                    self.cityImageView.image = self.updateIcon(weather.iconID)
                 case .failure(_):
                     break
                 }
             }
         }
     }
-    
+
     private func getNewYorkWeather() {
-        service.getWeather(lat: newYorkLat, lon: newYorkLon) { weatherNY in
+        service.geoWeather(lat: newYorkLat, lon: newYorkLon) { newYorkWeather in
             DispatchQueue.main.async {
-                switch weatherNY {
-                case let .success(weatherNY):
-                    self.newYorkTemp.text = "\(String(weatherNY.main.temp.description))°"
-                    self.newYorkDescription.text = "\(weatherNY.weather[0].weatherDescription)"
-                    self.newYorkMin.text = "\(String(weatherNY.main.tempMin.description))°"
-                    self.newYorkMax.text = "\(String(weatherNY.main.tempMax.description))°"
-                    self.newYorkImageView.image = self.updateIcon(weatherNY.weather[0].icon)
+                switch newYorkWeather {
+                case let .success(weather):
+                    self.newYorkTemp.text = weather.temp
+                    self.newYorkDescription.text = weather.description
+                    self.newYorkMin.text = weather.tempMin
+                    self.newYorkMax.text = weather.tempMax
+                    self.newYorkImageView.image = self.updateIcon(weather.iconID)
                 case .failure(_):
                     break
                 }
             }
         }
     }
-    
-    private func updateIcon(_ iconID: String) -> UIImage {
-        guard let ID = weatherIcon.init(rawValue: iconID)?.image else {
-            return UIImage(systemName: "trash")!
+
+    private func getAutoLocationWeather(lat: Double, lon: Double) {
+        service.cityAndStateNames(lat: lat, lon: lon) { cityAndState in
+            DispatchQueue.main.async {
+                switch cityAndState {
+                case let .success(cityName):
+                    self.cityLabel.text = cityName.city
+                    self.stateLabel.text = cityName.state
+                    self.getWeather(lat: lat, lon: lon)
+                case .failure(_):
+                    break
+                }
+            }
         }
-        return ID
+    }
+
+    private func updateIcon(_ iconID: String) -> UIImage? {
+        guard let weatherIcon = iconDictionnary[iconID] else {
+            return nil
+        }
+        return weatherIcon
     }
 }
-
 
 // MARK: - Label
 extension WeatherViewController {
@@ -177,7 +166,7 @@ extension WeatherViewController {
         stackView.layer.masksToBounds = true
         stackView.layer.cornerRadius = 8.0
     }
-    
+
     /// Method to add round corners to specified label
     private func addRoundCorner() {
         roundCornered(cityStackView)
@@ -187,9 +176,11 @@ extension WeatherViewController {
 
 // MARK: - Keyboard
 extension WeatherViewController: UITextFieldDelegate {
+
     @IBAction func dismissKeyboard(_ sender: UITapGestureRecognizer) {
         citySearchTextField.resignFirstResponder()
     }
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true

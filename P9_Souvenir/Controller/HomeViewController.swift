@@ -8,14 +8,14 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         randomHomeText()
     }
-    
+
     @IBOutlet weak var homeText: UILabel!
-    
+
     private func randomHomeText() {
         guard let cheers = cheers.randomElement() else {
             homeText.text = ""
