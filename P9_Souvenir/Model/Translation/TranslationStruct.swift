@@ -1,5 +1,5 @@
 //
-//  Translation.swift
+//  TranslationStruct.swift
 //  P9_Souvenir
 //
 //  Created by Nicolas Schena on 29/11/2022.
@@ -12,7 +12,7 @@ struct Translation: Codable {
     let translations: [TranslationElement]
 }
 
-// MARK: - TranslationElement
+// MARK: - Translation Element
 struct TranslationElement: Codable {
     let text: String
 }
