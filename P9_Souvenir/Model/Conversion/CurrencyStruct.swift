@@ -1,5 +1,5 @@
 //
-//  CurrenciesCode.swift
+//  CurrenciesStruct.swift
 //  P9_Souvenir
 //
 //  Created by Nicolas Schena on 05/09/2022.
@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Symbols API Struct
-struct CurrencyCodeAndName: Decodable {
+struct CurrencyCodeAndName: Codable {
     let symbols: [String: String]
 }
 
@@ -18,7 +18,7 @@ struct Currency {
 }
 
 // MARK: - Conversion API Struct
-struct CurrencyDateAndRate: Decodable {
+struct CurrencyDateAndRate: Codable {
     let info: Info
     let date: String
     let result: Double
